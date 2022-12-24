@@ -36,14 +36,34 @@ class GameState():
         
         self.pieces = pyglet.graphics.Batch()
         
-        self.load_game("rnbqkbnr/1pppppp1/8/8/8/8/PPPPPPPP/RNBQKBNR")
+        self.load_game("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR")
         
     def valid_pos(self,i,j,holding):
         if holding[1] == i and holding[2] == j:
             return False
-        if (j,i) in holding[0].moves:
-            return True
-        return False
+        try:
+            index = holding[0].moves.index((j,i))
+            piece = holding[0]
+            if piece.name.upper() == 'P':
+                way = -1 if piece.color == 'white' else 1
+                if self.board[i][j] == '-':
+                    if index == 0:
+                        return True
+                    if index == 3 and self.board[i - way][j] == '-':
+                        return True
+                else:
+                    if self.board[i][j].color != piece.color and 3 > index > 0:
+                        return True
+                return False
+            
+            if self.board[i][j] == '-':
+                return True
+            
+            if self.board[i][j].color != piece.color:
+                return True
+            
+        except ValueError:
+            return False
 
     def load_game(self,FEN):
         y = 635
@@ -57,6 +77,7 @@ class GameState():
                     while count != 0:
                         self.board[i][j] = '-'
                         count -= 1
+                        
                 else:
                     if piece == 'r':
                         self.board[i][j] = ChessPieces.Rook(i,j,game_core.sprite(self.imgs[piece], x, y, self.pieces),'black')
@@ -83,7 +104,7 @@ class GameState():
                     elif piece == 'P':
                         self.board[i][j] = ChessPieces.Pawn(i,j,game_core.sprite(self.imgs[piece], x, y, self.pieces),'white')    
                     self.board[i][j].sprite.scale = 1.94
-                    self.board[i][j].sprite.name = piece
+                    self.board[i][j].name = piece
                 j += 1
                 x += 90
             y -= 90

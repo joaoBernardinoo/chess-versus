@@ -27,9 +27,8 @@ class Game:
             
             self.table.board[i][j] = self.holding[0]
             self.table.board[self.holding[1]][self.holding[2]] = '-'
-            self.table.board[i][j].i = j
-            self.table.board[i][j].j = i
-            self.table.board[i][j].valid_moves()
+            self.table.board[i][j].update_pos(j,i)
+            
             player.next_source()
             if self.table.board[i][j].color == 'white':
                 player.queue(white_moves)
@@ -97,7 +96,7 @@ def text_board():
             if x == '-':
                 print(x,end=' ')
             else:
-                print(x.sprite.name,end= ' ')
+                print(x.name,end= ' ')
         print()
 
 @window.event
